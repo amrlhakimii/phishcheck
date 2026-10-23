@@ -1,0 +1,70 @@
+import type { AnalysisResult } from '../analyze'
+import { Badge, Card, Eyebrow, type BadgeTone } from './primitives'
+import { TONE_HEX } from './tone'
+
+function Gauge({ score, color }: { score: number; color: string }) {
+  const r = 52
+  const c = 2 * Math.PI * r
+  const dash = (score / 100) * c
+  return (
+    <svg viewBox="0 0 120 120" className="w-32 h-32 shrink-0" role="img" aria-label={`Score ${score} out of 100`}>
+      <circle cx="60" cy="60" r={r} fill="none" stroke="#222831" strokeWidth="10" />
+      <circle
+        cx="60" cy="60" r={r} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
+        strokeDasharray={`${dash} ${c}`} transform="rotate(-90 60 60)"
+      />
+      <text x="60" y="60" textAnchor="middle" dominantBaseline="central" fill="#EEEEEE" fontSize="30" fontWeight="800" fontFamily="Syne, system-ui, sans-serif">
+        {score}
+      </text>
+      <text x="60" y="84" textAnchor="middle" fill="#EEEEEE" fillOpacity="0.4" fontSize="9" letterSpacing="1.5">
+        OF 100
+      </text>
+    </svg>
+  )
+}
+
+export function VerdictCard({ result }: { result: AnalysisResult }) {
+  const { score } = result
+  const color = TONE_HEX[score.band.tone] ?? '#00ADB5'
+  const goodSigns = result.findings.filter((f) => f.severity === 'good')
+  return (
+    <Card className="fade-up">
+      <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
+        <div className="flex items-center gap-4">
+          <Gauge score={score.score} color={color} />
+          <div className="sm:hidden">
+            <Eyebrow>Verdict</Eyebrow>
+            <h2 className="text-2xl font-extrabold tracking-tight" style={{ color }}>{score.band.label}</h2>
+          </div>
+        </div>
+        <div className="min-w-0 flex-1">
+          <Eyebrow className="hidden sm:block">Verdict</Eyebrow>
+          <h2 className="hidden sm:block text-3xl font-extrabold tracking-tight mb-1" style={{ color }}>{score.band.label}</h2>
+          <p className="text-sm text-[#EEEEEE]/70 mb-3">{score.band.blurb}</p>
+          <Eyebrow className="mb-2">Top reasons</Eyebrow>
+          {score.topReasons.length === 0 ? (
+            <p className="text-sm text-[#EEEEEE]/50">No red flags found. This is not a guarantee: stay careful with unexpected requests.</p>
+          ) : (
+            <ol className="space-y-1.5">
+              {score.topReasons.map((f, i) => (
+                <li key={f.id} className="flex items-start gap-2 text-sm">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#00ADB5]/20 text-xs font-bold text-[#00ADB5]">{i + 1}</span>
+                  <span>{f.title}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+          {goodSigns.length > 0 && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Badge tone={'success' as BadgeTone}>Good signs</Badge>
+              <span className="text-xs text-[#EEEEEE]/50">{goodSigns.length} positive signal{goodSigns.length > 1 ? 's' : ''} lowered the score</span>
+            </div>
+          )}
+        </div>
+      </div>
+      <p className="mt-4 text-xs text-[#EEEEEE]/30">
+        Indicators and a heuristic score, not a guarantee. Marketing email can trigger link, wording and tracking checks, so a flag is a reason to look closer, not proof.
+      </p>
+    </Card>
+  )
+}
