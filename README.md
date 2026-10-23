@@ -4,7 +4,11 @@ A client-side phishing email analyzer. Paste the raw source of a suspicious emai
 
 It reports **indicators and a heuristic score. It is not a guarantee** that a message is safe or malicious, it is not an email gateway, and it does not replace your organisation's phishing tooling or reporting process. There is no machine learning in it: every rule and every weight is listed below.
 
-> Screenshots: TODO (none included yet; add real screenshots of the verdict card, Headers and Links tabs before publishing).
+![Verdict and top reasons](docs/screenshots/verdict.png)
+
+![Links tab: defanged, never clickable](docs/screenshots/links.png)
+
+<img src="docs/screenshots/mobile.png" alt="Mobile layout" width="280">
 
 ## Privacy model
 
