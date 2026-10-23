@@ -23,9 +23,12 @@ export function c3(ctx: Context): Finding[] {
   const lowNameSpaced = foldUnicode(name).replace(/[^a-z0-9]+/g, ' ')
   for (const b of BRANDS) {
     const nameKey = b.name.toLowerCase().replace(/[^a-z0-9]+/g, '')
+    const phrase = ` ${b.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()} `
+    const paddedName = ` ${lowNameSpaced.trim()} `
     const hit =
-      (nameKey.length >= 4 && lowName.includes(nameKey)) ||
-      [b.label, ...b.aliases].some((l) => l.length >= 4 && new RegExp(`(^| )${l}( |$)`).test(lowNameSpaced))
+      (nameKey.length >= 6 && lowName.includes(nameKey)) ||
+      paddedName.includes(phrase) ||
+      [b.label, ...b.aliases].some((l) => l.length >= 4 && paddedName.includes(` ${l} `))
     if (!hit) continue
     const dom = normalizeHost(f.domain)
     const official = b.domains.some((d) => dom === d || dom.endsWith('.' + d))

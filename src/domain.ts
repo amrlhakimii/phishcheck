@@ -80,7 +80,7 @@ export function punycodeDecode(input: string): string | null {
     for (let k = BASE; ; k += BASE) {
       if (idx >= input.length) return null
       const cp = input.charCodeAt(idx++)
-      const digit = cp - 48 < 10 ? cp - 22 : cp - 65 < 26 ? cp - 65 : cp - 97 < 26 ? cp - 97 : BASE
+      const digit = cp >= 48 && cp <= 57 ? cp - 22 : cp >= 65 && cp <= 90 ? cp - 65 : cp >= 97 && cp <= 122 ? cp - 97 : BASE
       if (digit >= BASE) return null
       i += digit * w
       if (i > 0x7fffffff) return null
@@ -171,6 +171,22 @@ export function levenshtein(a: string, b: string): number {
   return prev[b.length]
 }
 
+/** Edit distance where swapping two adjacent characters counts as one edit (optimal string alignment). */
+export function damerauLevenshtein(a: string, b: string): number {
+  if (a === b) return 0
+  if (Math.abs(a.length - b.length) > 8) return Math.abs(a.length - b.length)
+  const d: number[][] = Array.from({ length: a.length + 1 }, (_, i) => [i, ...new Array<number>(b.length).fill(0)])
+  for (let j = 1; j <= b.length; j++) d[0][j] = j
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost)
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1)
+    }
+  }
+  return d[a.length][b.length]
+}
+
 // ---------- Brand matching ----------
 export type LookalikeKind = 'homoglyph' | 'idn-homoglyph' | 'typosquat' | 'brand-in-domain' | 'brand-on-other-domain'
 
@@ -231,7 +247,7 @@ export function findLookalike(rawHost: string): LookalikeHit | null {
     for (const bl of brandLabels(b)) {
       if (bl.length < 5 || mainLabel === bl) continue
       const max = bl.length >= 9 ? 2 : 1
-      const d = levenshtein(foldUnicode(mainLabel), bl)
+      const d = damerauLevenshtein(foldUnicode(mainLabel), bl)
       if (d > 0 && d <= max) {
         return { kind: 'typosquat', brand: b, host, detail: `"${mainLabel}" is ${d} edit${d > 1 ? 's' : ''} away from "${bl}" (${b.name})` }
       }

@@ -30,16 +30,10 @@ export function VerdictCard({ result }: { result: AnalysisResult }) {
   return (
     <Card className="fade-up">
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
-        <div className="flex items-center gap-4">
-          <Gauge score={score.score} color={color} />
-          <div className="sm:hidden">
-            <Eyebrow>Verdict</Eyebrow>
-            <h2 className="text-2xl font-extrabold tracking-tight" style={{ color }}>{score.band.label}</h2>
-          </div>
-        </div>
+        <Gauge score={score.score} color={color} />
         <div className="min-w-0 flex-1">
-          <Eyebrow className="hidden sm:block">Verdict</Eyebrow>
-          <h2 className="hidden sm:block text-3xl font-extrabold tracking-tight mb-1" style={{ color }}>{score.band.label}</h2>
+          <Eyebrow>Verdict</Eyebrow>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1" style={{ color }}>{score.band.label}</h2>
           <p className="text-sm text-[#EEEEEE]/70 mb-3">{score.band.blurb}</p>
           <Eyebrow className="mb-2">Top reasons</Eyebrow>
           {score.topReasons.length === 0 ? (

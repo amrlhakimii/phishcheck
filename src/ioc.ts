@@ -17,20 +17,15 @@ export function defangEmail(e: string): string {
 }
 
 /**
- * Defang any URL, domain, IP or email-looking token inside free text.
- * Token based (no nested quantifiers) so it stays linear on long input.
+ * Defang any URL, domain, IP or email-looking text inside free text. Every dot between two
+ * alphanumerics becomes "[.]", every "@" becomes "[@]" and schemes become hxxp[://].
+ * Only single-character look-behind/ahead regexes are used, so it stays linear on long input.
  */
 export function defangText(text: string, maxLen = 600): string {
   const t = text.length > maxLen ? text.slice(0, maxLen) + '…' : text
   return t
-    .split(/(\s+)/)
-    .map((tok) => {
-      if (!tok || /^\s+$/.test(tok)) return tok
-      if (/^h(t)tps?:\/\//i.test(tok) || /^(hxxps?|ftp):\/\//i.test(tok)) return defangUrl(tok)
-      let out = tok.replace(/^h(t)tp(s?)\b/i, 'hxxp$2')
-      out = out.replace(/@/g, '[@]')
-      out = out.replace(/([A-Za-z0-9_~-])\.(?=[A-Za-z0-9_~-])/g, '$1[.]')
-      return out
-    })
-    .join('')
+    .replace(/\bhttp(s?):\/\//gi, (_m, s: string) => `hxxp${s}[://]`)
+    .replace(/\b(hxxps?|ftp):\/\//gi, (_m, p: string) => `${p}[://]`)
+    .replace(/@/g, '[@]')
+    .replace(/([A-Za-z0-9_~-])\.(?=[A-Za-z0-9_~-])/g, '$1[.]')
 }
