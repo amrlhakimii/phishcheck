@@ -8,7 +8,7 @@ import { SAMPLES } from '../src/samples'
 import { DOH_HOST, isQueryableDomain, lookupSenderDomain, dnsFindings } from '../src/doh'
 import { BASE_HEADERS, mail } from './helpers'
 
-const verdict = () => screen.findByRole('heading', { level: 2, name: /^(Looks fine|Be careful|Suspicious|Likely phishing)$/ })
+const verdict = () => screen.findByRole('heading', { level: 2, name: /^(No obvious red flags|Low risk|Be careful|Suspicious|Likely phishing)$/ })
 
 /** Every way a page could talk to the network, all replaced with tripwires. */
 function installTripwires() {
@@ -228,8 +228,15 @@ describe('UI states', () => {
     const user = userEvent.setup()
     render(<App />)
     await user.click(screen.getByRole('button', { name: /legitimate newsletter/i }))
-    expect(await screen.findByRole('heading', { name: 'Looks fine', level: 2 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'No obvious red flags', level: 2 })).toBeInTheDocument()
     expect(screen.getAllByText('Good signs').length).toBeGreaterThan(0)
+  })
+  it('CEO gift-card sample shows Suspicious and the executive-impersonation finding', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: /ceo gift-card scam/i }))
+    expect(await screen.findByRole('heading', { name: 'Suspicious', level: 2 })).toBeInTheDocument()
+    expect(screen.getAllByText(/executive or authority role/i).length).toBeGreaterThan(0)
   })
   it('copy-all-defanged copies defanged text only', async () => {
     const write = vi.fn(async () => {})

@@ -47,14 +47,18 @@ It reports **indicators and a heuristic score. It is not a guarantee** that a me
 | C9 | Attachment risk | By name and declared type only (never opened): executables/scripts, double extensions, HTML, macro Office files, disk images/shortcuts/archives, archive plus a password in the body. |
 | C10 | Header anomalies | Missing `Message-ID`, unreadable or implausible `Date`, backwards `Received` timestamps, day-long hop delays. |
 | C11 | Tracking and hidden content | 1x1 / hidden images, text hidden with CSS (size 0, display:none, white on white), more than 10 remote images. |
-| C12 | Positive signals | Aligned SPF/DKIM/DMARC passes and consistent domains lower the score. Ignored when any high-severity finding exists (attackers can pass authentication on a domain they own). |
+| C12 | Positive signals | Aligned SPF/DKIM/DMARC passes and consistent domains lower the score. Ignored when any high-severity finding or any C14 / C15 lure finding exists (attackers can pass authentication on a domain they own). |
+| C13 | Executive impersonation | Display name carries an authority title or role (CEO, CFO, COO, MD, Director, President, Chairman, Boss, HR, Finance, Dato', Datuk, Tan Sri, Tuan, Puan, Pengarah, Pengerusi and similar; short acronyms are matched in capitals only; honorifics only at the start of the name) AND the address is on a free-mail provider (gmail.com, outlook.com, hotmail.com, yahoo.com, icloud.com, proton.me, protonmail.com, live.com, mail.com) OR the Reply-To organisation differs from From. High severity. |
+| C14 | Payment and secrecy lures | Counts how many different kinds of ask appear in the subject or body (text or HTML, English and Bahasa Malaysia): gift cards / voucher codes, wire or bank transfer, change of bank details, "are you available" / "quick favour" openers, secrecy ("keep this confidential", "jangan beritahu", "rahsiakan"), buy-and-send-codes, urgent request. 1 group is low, 2 medium, 3 or more high. A message with a `List-Unsubscribe` header needs 3 or more groups, so ordinary promotions that mention gift cards stay quiet. |
+| C15 | QR-code lures | Wording that asks you to scan a QR code / use the phone camera to continue, verify, re-enrol MFA, pay or log in, in a message that has an image (inline or remote) and 0-2 links. Medium severity. The image is never decoded, only the wording is read. |
+| COMBO | Combination bonuses | Added only when signals co-occur, each shown as its own finding: brand in display name + lookalike / brand-in-domain + link-text mismatch (+12); executive impersonation + C14 lure (+10). |
 | DNS | Optional DNS check | Sender domain does not exist, or publishes no SPF / DMARC. Only when switched on. |
 
 Marketing email can legitimately trigger C6, C7 and C11. That is why each finding explains itself and why the verdict is a band, not a yes/no.
 
 ## Scoring weights
 
-Findings add (or, for good signs, subtract) the points below. Each check contributes at most its **cap**: C1 35, C2 20, C3 25, C4 40, C5 30, C6 20, C7 12, C8 22, C9 35, C10 8, C11 8, DNS 12. Good signs together lower the total by at most 20. The final score is clamped to 0-100. The same table is shown in the app under "How the score works" and is generated from `src/weights.ts`.
+Findings add (or, for good signs, subtract) the points below. Each check contributes at most its **cap**: C1 35, C2 20, C3 25, C4 40, C5 30, C6 20, C7 12, C8 22, C9 35, C10 8, C11 8, C13 18, C14 20, C15 15, COMBO 20, DNS 12. Good signs together lower the total by at most 20. The final score is clamped to 0-100. The same table is shown in the app under "How the score works" and is generated from `src/weights.ts`.
 
 | Check | Finding | Points |
 |---|---|---|
@@ -103,6 +107,13 @@ Findings add (or, for good signs, subtract) the points below. Each check contrib
 | C11 | Hidden text via CSS | +5 |
 | C11 | 1x1 / hidden tracking image | +3 |
 | C11 | Many remote images (over 10) | +2 |
+| C13 | Executive / authority title in the display name, sent from a free-mail address or with a Reply-To on another domain | +18 |
+| C14 | Payment / gift-card / secrecy wording, 1 phrase group | +6 |
+| C14 | Payment / gift-card / secrecy wording, 2 phrase groups | +14 |
+| C14 | Payment / gift-card / secrecy wording, 3 or more phrase groups | +20 |
+| C15 | Asks you to scan a QR code, message has an image and few or no links | +15 |
+| COMBO | Combination: brand in display name + lookalike / brand-in-domain + link-text mismatch together | +12 |
+| COMBO | Combination: executive impersonation + payment / gift-card / secrecy wording together | +10 |
 | C12 | SPF, DKIM and DMARC all pass and align with From | -15 |
 | C12 | Some authentication passes and aligns (no failures) | -6 |
 | C12 | From, Return-Path and Reply-To domains consistent | -5 |
@@ -112,16 +123,20 @@ Findings add (or, for good signs, subtract) the points below. Each check contrib
 
 | Score | Verdict |
 |---|---|
-| 0-24 | Looks fine (no obvious red flags; not a guarantee) |
+| 0-24 | No obvious red flags (not a guarantee). Shown only when there are no medium or high findings; otherwise "Low risk" (minor medium finding) or the floor below |
 | 25-49 | Be careful |
 | 50-74 | Suspicious |
 | 75-100 | Likely phishing |
 
-The three samples score: obvious phish 100 (Likely phishing), lookalike-domain phish 72 (Suspicious), legitimate newsletter 0 (Looks fine, with good signs).
+**Verdict floor.** The number is never altered, but the verdict is raised to at least "Be careful" (and says why, in the app and in the report) when any of these is true: any high-severity finding exists; any single medium-severity finding is worth 12 or more points; or positive findings total 12 or more points across two or more different checks. This stops a low number from reading as reassurance when a serious indicator exists (for example a QR-code lure on an authenticated domain, where good signs would otherwise cancel the finding out).
+
+The four samples score: obvious phish 100 (Likely phishing), lookalike-domain phish 72 (Suspicious), CEO gift-card scam 64 (Suspicious), legitimate newsletter 0 (No obvious red flags, with good signs).
 
 ## Samples
 
-All three are invented. Domains are reserved (`example.com`, `example.net`, `example.org`, `.test`) and IPs come from the documentation ranges `203.0.113.0/24` and `198.51.100.0/24`. Real brand names appear only as the brand being imitated. No real person or organisation is a sender. The brand list (`src/data/brands.json`, Maybank, CIMB, RHB, Public Bank, Touch 'n Go, Shopee, Lazada, LHDN, PosLaju, PayPal, Microsoft, Google, Apple, DHL, FedEx and more) is easy to extend.
+All four are invented. The CEO gift-card scam is plain text from `ceo-office@mail.example.test` with a Reply-To on another `.test` domain, so it demonstrates the executive-impersonation finding through the Reply-To path without naming any real mail provider.
+
+In all samples, domains are reserved (`example.com`, `example.net`, `example.org`, `.test`) and IPs come from the documentation ranges `203.0.113.0/24` and `198.51.100.0/24`. Real brand names appear only as the brand being imitated. No real person or organisation is a sender. The brand list (`src/data/brands.json`, Maybank, CIMB, RHB, Public Bank, Touch 'n Go, Shopee, Lazada, LHDN, PosLaju, PayPal, Microsoft, Google, Apple, DHL, FedEx and more) is easy to extend.
 
 ## Defensive parsing
 
@@ -129,11 +144,17 @@ All three are invented. Domains are reserved (`example.com`, `example.net`, `exa
 
 ## Limitations
 
-- Heuristics, not a verdict. Expect false positives (marketing mail) and false negatives (a well-crafted message from a compromised genuine account passes every check).
+- Heuristics, not a verdict. Expect false positives (marketing mail, a legitimate person who uses a free-mail address and a title) and false negatives.
+- **Attacker-authenticated domains with clean wording.** A criminal who registers a fresh, non-brand domain, sets up SPF/DKIM/DMARC properly and writes calm, ordinary wording (no urgency, no brand, no known phrase) will look fine. There is no domain age or reputation data. The same goes for a message from a compromised genuine account.
+- **Image-only lures.** Images are never loaded or decoded. The QR-code check (C15) only reads the wording around the image; a QR lure with no text, text inside the image, or different phrasing is invisible. It cannot tell whether a QR code is malicious.
+- **Attachment content is not inspected.** Attachments are judged by name and declared type only. A clean-looking PDF or Office file with a malicious link inside is not seen; links inside attachments are not extracted.
+- **No reputation data.** No URL, domain, IP or hash reputation lookups, no WHOIS age, no threat feeds. The optional DNS check only tests whether SPF/DMARC records exist.
+- The wording lists (C7, C8, C14, C15) and the authority-title list (C13) are small, hand-made, English and Bahasa Malaysia only. Paraphrased scams and other languages will be missed, and ordinary words can match (C13 deliberately limits short acronyms to capitals).
 - Pasted headers can be edited by the sender; only headers added by your own mail provider are trustworthy. A pass for SPF/DKIM/DMARC proves who authorised the message, not that it is benign.
-- The registrable-domain logic is a small built-in suffix list, not the full Public Suffix List, so unusual suffixes can be mis-grouped.
-- Brand and wording lists are small and hand-made (English and Bahasa Malaysia only). Edit-distance matching on short brand names is deliberately limited (5+ characters) and can still flag innocent words.
-- No attachment or link content is inspected, no URL reputation lookups, no QR-code (quishing) detection, no S/MIME or PGP handling, no non-UTF-8 charset guarantees beyond what the browser's `TextDecoder` supports.
+- The registrable-domain logic is a small built-in suffix list, not the full Public Suffix List, so unusual suffixes can be mis-grouped. The free-mail list has nine providers.
+- Brand list is small. Edit-distance matching on short brand names is deliberately limited (5+ characters) and can still flag innocent words.
+- The combination bonuses and the verdict floor are judgement calls tuned on a small set of invented test messages, not on a large real-world corpus.
+- No S/MIME or PGP handling, no non-UTF-8 charset guarantees beyond what the browser's `TextDecoder` supports.
 - The analysis deadline is cooperative (checked between steps), not a hard timeout, because it runs on the main thread.
 - Automated accessibility checks (axe, structural rules) pass; colour contrast and real-device mobile layout were not machine-verified.
 

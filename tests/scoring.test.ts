@@ -14,7 +14,7 @@ const run = (id: string): AnalysisResult => {
 }
 
 describe('verdict bands', () => {
-  it.each([[0, 'Looks fine'], [24, 'Looks fine'], [25, 'Be careful'], [49, 'Be careful'], [50, 'Suspicious'], [74, 'Suspicious'], [75, 'Likely phishing'], [100, 'Likely phishing']])('score %i is %s', (s, label) => {
+  it.each([[0, 'No obvious red flags'], [24, 'No obvious red flags'], [25, 'Be careful'], [49, 'Be careful'], [50, 'Suspicious'], [74, 'Suspicious'], [75, 'Likely phishing'], [100, 'Likely phishing']])('score %i is %s', (s, label) => {
     expect(bandFor(s).label).toBe(label)
   })
   it('bands cover 0-100 without gaps', () => {
@@ -58,7 +58,7 @@ describe('sample emails land in the expected bands', () => {
   it('legitimate newsletter < 25 with good signs', () => {
     const r = run('newsletter')
     expect(r.score.score).toBeLessThan(25)
-    expect(r.score.band.label).toBe('Looks fine')
+    expect(r.score.band.label).toBe('No obvious red flags')
     expect(r.findings.filter((x) => x.severity === 'good').length).toBeGreaterThan(0)
   })
   it('phish sample: header explainer chain is ordered with per-hop delays (A5)', () => {
@@ -97,7 +97,7 @@ describe('sample hygiene (SR-6)', () => {
 })
 
 describe('report export (A6)', () => {
-  it.each(['phish', 'lookalike', 'newsletter'])('%s report has verdict, score, findings and only defanged IOCs', (id) => {
+  it.each(['phish', 'lookalike', 'newsletter', 'ceo'])('%s report has verdict, score, findings and only defanged IOCs', (id) => {
     const r = run(id)
     const md = buildReport(r)
     expect(md).toContain(`**Verdict:** ${r.score.band.label}`)
