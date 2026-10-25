@@ -20,11 +20,12 @@ function aligned(ctx: Context): { spf: boolean; dkim: boolean; dmarc: boolean } 
 }
 
 /**
- * C12: positive signals. These are suppressed whenever another check found something high severity,
+ * C12: positive signals. These are suppressed whenever another check found something high severity or a lure (C14, C15),
  * because attackers can pass authentication on a domain they own.
  */
 export function c12(ctx: Context, others: Finding[]): Finding[] {
-  if (others.some((f) => f.severity === 'high' && f.points > 0)) return []
+  // Lure wording (C14 payment/secrecy, C15 QR) is also exempt: passing authentication says who sent it, not that the ask is genuine.
+  if (others.some((f) => f.points > 0 && (f.severity === 'high' || f.check === 'C14' || f.check === 'C15'))) return []
   const out: Finding[] = []
   const a = aligned(ctx)
   const anyFail = ctx.auth.some((r) => ['fail', 'softfail'].includes(r.result) && ['spf', 'dkim', 'dmarc'].includes(r.method))

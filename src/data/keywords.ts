@@ -56,3 +56,35 @@ export function findPhrases(text: string, phrases: string[], limit = 12): string
   }
   return hits
 }
+
+/**
+ * Social-engineering phrase GROUPS (English + Bahasa Malaysia) for C14. A group counts once however many
+ * of its phrases appear, so the finding is weighted by how many different kinds of ask are in the message.
+ */
+export const SOCIAL_GROUPS: { id: string; label: string; phrases: string[] }[] = [
+  { id: 'giftcard', label: 'gift cards / voucher codes', phrases: ['gift card', 'giftcard', 'voucher code', 'itunes card', 'apple gift', 'google play card', 'google play gift', 'steam card', 'steam gift', 'kad hadiah', 'kod baucar'] },
+  { id: 'transfer', label: 'wire / bank transfer', phrases: ['wire transfer', 'bank transfer', 'transfer the funds', 'transfer funds', 'pindahan wang', 'pindah wang', 'buat pindahan'] },
+  { id: 'bankchange', label: 'change of bank details', phrases: ['change of bank', 'changed our bank', 'new bank details', 'updated bank details', 'bank details have changed', 'new account number', 'tukar akaun bank', 'akaun bank baharu', 'akaun bank baru', 'nombor akaun baharu'] },
+  { id: 'availability', label: 'availability / favour opener', phrases: ['are you available', 'are you at your desk', 'quick favour', 'quick favor', 'do me a favour', 'do me a favor', 'need a favour', 'need a favor', 'adakah anda free', 'boleh tolong saya', 'minta tolong sikit'] },
+  { id: 'secrecy', label: 'secrecy', phrases: ['keep this confidential', 'keep it confidential', 'keep this between us', 'between us', "don't tell anyone", 'do not tell anyone', "don't share this", 'do not discuss this', 'jangan beritahu', 'rahsiakan'] },
+  { id: 'purchase', label: 'buy and send codes', phrases: ['buy gift', 'purchase gift', 'buy 5 gift', 'send me the codes', 'send the codes', 'send me the pin', 'photo of the card', 'picture of the card', 'scratch off', 'beli kad', 'hantar kod'] },
+  { id: 'urgentreq', label: 'urgent request', phrases: ['urgent request', 'urgent task', 'urgent matter', 'permintaan segera', 'urusan segera', 'perkara segera', 'tugasan segera'] },
+]
+
+/** Authority titles for C13. Short acronyms are case-sensitive to avoid matching ordinary words. */
+export const AUTHORITY_ACRONYMS: string[] = ['CEO', 'CFO', 'COO', 'CTO', 'CIO', 'MD', 'HR']
+export const AUTHORITY_WORDS: string[] = [
+  'managing director', 'director', 'president', 'chairman', 'chairperson', 'boss', 'finance', 'human resources', 'payroll',
+  'pengarah urusan', 'pengarah', 'pengerusi', 'presiden', 'ketua pegawai eksekutif', 'bos',
+]
+/** Honorific titles; only count at the very start of the display name. */
+export const AUTHORITY_PREFIXES: string[] = ['dato sri', "dato'", 'dato', 'datuk seri', 'datuk', 'tan sri', 'tun', 'tuan', 'puan']
+
+export const FREEMAIL_DOMAINS: string[] = [
+  'gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com', 'proton.me', 'protonmail.com', 'live.com', 'mail.com',
+]
+
+/** QR-code lure wording (C15). */
+export const QR_MENTION = /\bqr[\s-]?(?:code|kod)?\b|\bkod qr\b|\bbarcode\b|\bscan (?:the|this|that) (?:code|image)\b/
+export const QR_SCAN_VERB = /\b(?:scan|scanning|camera|imbas)\b/
+export const QR_ACTION = /\b(?:continue|verify|verification|re-?enrol(?:l)?|enrol(?:l)?|mfa|2fa|two-factor|multi-factor|authenticat\w*|pay|payment|log ?in|sign ?in|access|unlock|update|secure|confirm|teruskan|sahkan|bayar|log masuk|akses)\b/

@@ -12,6 +12,10 @@ import { c9 } from './c9'
 import { c10 } from './c10'
 import { c11 } from './c11'
 import { c12 } from './c12'
+import { c13 } from './c13'
+import { c14 } from './c14'
+import { c15 } from './c15'
+import { combo } from './combo'
 
 export const CHECKS: { id: string; name: string; run: (ctx: Context) => Finding[] }[] = [
   { id: 'C1', name: 'Authentication results', run: c1 },
@@ -25,11 +29,16 @@ export const CHECKS: { id: string; name: string; run: (ctx: Context) => Finding[
   { id: 'C9', name: 'Attachment risk', run: c9 },
   { id: 'C10', name: 'Header anomalies', run: c10 },
   { id: 'C11', name: 'Tracking and hidden content', run: c11 },
+  { id: 'C13', name: 'Executive impersonation', run: c13 },
+  { id: 'C14', name: 'Payment and secrecy lures', run: c14 },
+  { id: 'C15', name: 'QR-code lures', run: c15 },
 ]
 
 export { c12 }
+export const EXTRA_NAMES: Record<string, string> = { COMBO: 'Combination bonus' }
 
 export function runAllChecks(ctx: Context): Finding[] {
   const found = CHECKS.flatMap((c) => c.run(ctx))
-  return [...found, ...c12(ctx, found)]
+  const withCombo = [...found, ...combo(found)]
+  return [...withCombo, ...c12(ctx, withCombo)]
 }

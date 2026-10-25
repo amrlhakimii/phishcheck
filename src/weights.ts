@@ -55,6 +55,13 @@ export const WEIGHTS: WeightDef[] = [
   { code: 'C11.hidden_text', check: 'C11', label: 'Hidden text via CSS', points: 5 },
   { code: 'C11.pixel', check: 'C11', label: '1x1 / hidden tracking image', points: 3 },
   { code: 'C11.many_images', check: 'C11', label: 'Many remote images (over 10)', points: 2 },
+  { code: 'C13.authority_freemail', check: 'C13', label: 'Executive / authority title in the display name, sent from a free-mail address or with a Reply-To on another domain', points: 18 },
+  { code: 'C14.social_one', check: 'C14', label: 'Payment / gift-card / secrecy wording, 1 phrase group', points: 6 },
+  { code: 'C14.social_two', check: 'C14', label: 'Payment / gift-card / secrecy wording, 2 phrase groups', points: 14 },
+  { code: 'C14.social_many', check: 'C14', label: 'Payment / gift-card / secrecy wording, 3 or more phrase groups', points: 20 },
+  { code: 'C15.qr_lure', check: 'C15', label: 'Asks you to scan a QR code, message has an image and few or no links', points: 15 },
+  { code: 'COMBO.brand_spoof', check: 'COMBO', label: 'Combination: brand in display name + lookalike / brand-in-domain + link-text mismatch together', points: 12 },
+  { code: 'COMBO.exec_payment', check: 'COMBO', label: 'Combination: executive impersonation + payment / gift-card / secrecy wording together', points: 10 },
   { code: 'C12.all_pass', check: 'C12', label: 'SPF, DKIM and DMARC all pass and align with From', points: -15 },
   { code: 'C12.partial_pass', check: 'C12', label: 'Some authentication passes and aligns (no failures)', points: -6 },
   { code: 'C12.consistent', check: 'C12', label: 'From, Return-Path and Reply-To domains consistent', points: -5 },
@@ -73,14 +80,28 @@ export function weight(code: string): number {
 
 /** Maximum a single check may add, so one noisy check cannot dominate the score. */
 export const CHECK_CAPS: Record<string, number> = {
-  C1: 35, C2: 20, C3: 25, C4: 40, C5: 30, C6: 20, C7: 12, C8: 22, C9: 35, C10: 8, C11: 8, DNS: 12,
+  C1: 35, C2: 20, C3: 25, C4: 40, C5: 30, C6: 20, C7: 12, C8: 22, C9: 35, C10: 8, C11: 8, C13: 18, C14: 20, C15: 15, COMBO: 20, DNS: 12,
 }
 /** Maximum a check may subtract. */
 export const GOOD_CAP = -20
 
 export const BANDS = [
-  { id: 'fine', min: 0, max: 24, label: 'Looks fine', tone: 'success', blurb: 'No obvious red flags were found. That is not a guarantee of safety.' },
+  { id: 'fine', min: 0, max: 24, label: 'No obvious red flags', tone: 'success', blurb: 'No obvious red flags were found. That is not a guarantee of safety.' },
   { id: 'careful', min: 25, max: 49, label: 'Be careful', tone: 'warning', blurb: 'A few indicators were found. Check the sender through another channel before acting.' },
   { id: 'suspicious', min: 50, max: 74, label: 'Suspicious', tone: 'orange', blurb: 'Several indicators point to a possible phishing attempt. Do not click or reply.' },
   { id: 'phishing', min: 75, max: 100, label: 'Likely phishing', tone: 'danger', blurb: 'Many strong indicators of phishing. Do not interact; report and delete it.' },
 ] as const
+
+/** Label used when the score is under 25 but a medium-severity finding exists that did not trigger the floor. */
+export const LOW_RISK_LABEL = 'Low risk'
+
+/**
+ * Verdict floor. The numeric score never changes, but the verdict may not stay in the lowest band
+ * when any of these is true. The UI panel, the report and the README all print this list.
+ */
+export const FLOOR_RULES: string[] = [
+  'any high-severity finding exists',
+  'any single medium-severity finding is worth 12 or more points',
+  'positive findings total 12 or more points across two or more different checks',
+]
+export const FLOOR_MIN_POINTS = 12
