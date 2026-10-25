@@ -43,6 +43,7 @@ export function buildReport(r: AnalysisResult): string {
   lines.push('> PhishCheck reports indicators and a heuristic score. It is not a guarantee that a message is safe or malicious. For a real incident, report it through your organisation\'s process.', '')
   lines.push(`**Verdict:** ${score.band.label}`, `**Score:** ${score.score}/100`, '')
   lines.push(score.band.blurb, '')
+  if (score.floorReason) lines.push(`*Verdict floor applied: the numeric score is ${score.score}, but the verdict is raised to "${score.band.label}" because ${score.floorReason}.*`, '')
   if (score.topReasons.length) {
     lines.push('## Top reasons', '')
     score.topReasons.forEach((f, i) => lines.push(`${i + 1}. ${f.title}`))

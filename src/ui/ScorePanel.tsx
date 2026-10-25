@@ -1,8 +1,8 @@
-import { BANDS, CHECK_CAPS, GOOD_CAP, WEIGHTS } from '../weights'
-import { CHECKS } from '../checks'
+import { BANDS, CHECK_CAPS, FLOOR_RULES, GOOD_CAP, WEIGHTS } from '../weights'
+import { CHECKS, EXTRA_NAMES } from '../checks'
 import { Card, Disclosure } from './primitives'
 
-const NAMES: Record<string, string> = { ...Object.fromEntries(CHECKS.map((c) => [c.id, c.name])), C12: 'Positive signals', DNS: 'Optional DNS check' }
+const NAMES: Record<string, string> = { ...Object.fromEntries(CHECKS.map((c) => [c.id, c.name])), ...EXTRA_NAMES, C12: 'Positive signals', DNS: 'Optional DNS check' }
 
 export function ScorePanel() {
   const groups = [...new Set(WEIGHTS.map((w) => w.check))]
@@ -33,7 +33,9 @@ export function ScorePanel() {
           </div>
           <ul className="list-disc pl-5 space-y-1 text-xs text-[#EEEEEE]/60">
             <li>Per-check caps: {Object.entries(CHECK_CAPS).map(([k, v]) => `${k} max +${v}`).join(', ')}. Good signs together can lower the score by at most {Math.abs(GOOD_CAP)}.</li>
-            <li>Good signs (C12) are ignored when any high-severity finding exists, because attackers can pass authentication on a domain they own.</li>
+            <li>Good signs (C12) are ignored when any high-severity finding or any payment / QR lure finding exists, because attackers can pass authentication on a domain they own.</li>
+            <li>Combination bonuses (COMBO rows) are added only when the listed signals appear together, and are shown as their own findings.</li>
+            <li>Verdict floor: the number is never changed, but the verdict is raised to at least &quot;Be careful&quot; when {FLOOR_RULES.join('; or ')}. &quot;No obvious red flags&quot; is shown only when the score is under 25 and there are no medium or high findings (otherwise &quot;Low risk&quot;).</li>
             <li>The optional DNS check only adds findings when you switch it on.</li>
           </ul>
           <div>

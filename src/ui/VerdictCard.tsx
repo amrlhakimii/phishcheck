@@ -35,6 +35,9 @@ export function VerdictCard({ result }: { result: AnalysisResult }) {
           <Eyebrow>Verdict</Eyebrow>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-1" style={{ color }}>{score.band.label}</h2>
           <p className="text-sm text-[#EEEEEE]/70 mb-3">{score.band.blurb}</p>
+          {score.floorReason && (
+            <p className="text-xs text-[#EEEEEE]/50 mb-3" data-testid="floor-note">Verdict floor applied: the number is {score.score}, but the verdict is raised because {score.floorReason}.</p>
+          )}
           <Eyebrow className="mb-2">Top reasons</Eyebrow>
           {score.topReasons.length === 0 ? (
             <p className="text-sm text-[#EEEEEE]/50">No red flags found. This is not a guarantee: stay careful with unexpected requests.</p>

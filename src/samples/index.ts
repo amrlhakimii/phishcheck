@@ -1,5 +1,5 @@
 /**
- * Three INVENTED sample emails for demos and tests.
+ * Four INVENTED sample emails for demos and tests.
  * Domains are reserved (example.com / example.net / example.org / .test) and IPs come from the
  * documentation ranges 203.0.113.0/24 and 198.51.100.0/24. Brand names appear only as the targets
  * being imitated. No real people or organisations are senders.
@@ -185,10 +185,41 @@ ${b64(NEWS_HTML)}
 --news-alt--
 `
 
+const CEO_TEXT = `Hi,
+
+Are you available? I need a quick favour. I am in a meeting and cannot take calls.
+
+Please buy 5 gift cards (50 each) for a client today and send me the codes by reply.
+I will reimburse you later. Keep this confidential for now, it is an urgent request.
+
+Dato' Ahmad
+Sent from my phone
+`
+
+export const SAMPLE_CEO = `Received: from mail.example.test (mail.example.test [198.51.100.40])
+	by mx.example.com with ESMTPS id c42; Sat, 24 Oct 2026 04:21:18 +0000
+Authentication-Results: mx.example.com;
+	spf=pass smtp.mailfrom=mail.example.test;
+	dkim=pass header.d=mail.example.test;
+	dmarc=pass header.from=mail.example.test
+Return-Path: <ceo-office@mail.example.test>
+From: "Dato' Ahmad (CEO)" <ceo-office@mail.example.test>
+Reply-To: ahmad.private@personal-mail.test
+To: finance.exec@example.com
+Subject: Urgent request
+Date: Sat, 24 Oct 2026 04:21:15 +0000
+Message-ID: <ceo-3@mail.example.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+${CEO_TEXT}`
+
 export interface Sample { id: string; label: string; blurb: string; raw: string }
 
 export const SAMPLES: Sample[] = [
   { id: 'phish', label: 'Obvious phish', blurb: 'Fake bank alert in English and Bahasa Malaysia, failed authentication, disguised links, executable attachment.', raw: SAMPLE_PHISH },
   { id: 'lookalike', label: 'Lookalike-domain phish', blurb: 'Passes authentication, but the domain is a look-alike (rn instead of m) and the link text lies.', raw: SAMPLE_LOOKALIKE },
   { id: 'newsletter', label: 'Legitimate newsletter', blurb: 'Authenticated marketing email with a tracking pixel: should score low.', raw: SAMPLE_NEWSLETTER },
+  { id: 'ceo', label: 'CEO gift-card scam', blurb: 'Plain-text boss impersonation: authority title, Reply-To on another domain, gift cards and secrecy. Passes authentication, which is why wording and sender checks matter.', raw: SAMPLE_CEO },
 ]
