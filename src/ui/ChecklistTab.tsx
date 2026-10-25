@@ -38,7 +38,7 @@ export function ChecklistTab({ band }: { band: BandId }) {
   return (
     <Card>
       <Eyebrow className="mb-1">Safe-action checklist</Eyebrow>
-      <p className="text-xs text-[#EEEEEE]/40 mb-3">Tailored to the verdict. Tick items off as you go; nothing is saved.</p>
+      <p className="text-xs text-[#f0ecfa]/40 mb-3">Tailored to the verdict. Tick items off as you go; nothing is saved.</p>
       <ul className="space-y-2">
         {items.map((it, i) => (
           <li key={i}>
@@ -47,18 +47,18 @@ export function ChecklistTab({ band }: { band: BandId }) {
               role="checkbox"
               aria-checked={!!done[i]}
               onClick={() => setDone((d) => ({ ...d, [i]: !d[i] }))}
-              className={`flex w-full cursor-pointer items-start gap-3 rounded-xl border bg-[#222831] px-3 py-3 text-left min-h-11 sm:min-h-0 transition-colors hover:border-[#00ADB5]/40 ${done[i] ? 'border-[#00ADB5]/60' : 'border-white/8'}`}
+              className={`flex w-full cursor-pointer items-start gap-3 rounded-xl border bg-[#1a1424] px-3 py-3 text-left min-h-11 sm:min-h-0 transition-colors hover:border-[#a78bfa]/40 ${done[i] ? 'border-[#a78bfa]/60' : 'border-white/8'}`}
             >
-              <span aria-hidden="true" className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs ${done[i] ? 'border-[#00ADB5] bg-[#00ADB5] text-[#222831]' : 'border-[#EEEEEE]/30'}`}>{done[i] ? '✓' : ''}</span>
+              <span aria-hidden="true" className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs ${done[i] ? 'border-[#a78bfa] bg-[#a78bfa] text-[#1a1424]' : 'border-[#f0ecfa]/30'}`}>{done[i] ? '✓' : ''}</span>
               <span>
-                <span className={`block text-sm font-medium ${done[i] ? 'line-through text-[#EEEEEE]/50' : ''}`}>{it.text}</span>
-                <span className="block text-xs text-[#EEEEEE]/50">{it.detail}</span>
+                <span className={`block text-sm font-medium ${done[i] ? 'line-through text-[#f0ecfa]/50' : ''}`}>{it.text}</span>
+                <span className="block text-xs text-[#f0ecfa]/50">{it.detail}</span>
               </span>
             </button>
           </li>
         ))}
       </ul>
-      <p className="mt-4 text-xs text-[#EEEEEE]/30">For a real incident, follow your organisation's reporting process. PhishCheck cannot confirm whether a message is malicious.</p>
+      <p className="mt-4 text-xs text-[#f0ecfa]/30">For a real incident, follow your organisation's reporting process. PhishCheck cannot confirm whether a message is malicious.</p>
     </Card>
   )
 }

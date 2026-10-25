@@ -39,9 +39,9 @@ export function InputPanel({ value, onChange, onAnalyse, onSample, onFile, busy 
           spellCheck={false}
           autoComplete="off"
           placeholder={'Paste the full raw source here (headers and body), or drop an .eml file.\n\nReceived: from ...\nFrom: ...\nSubject: ...'}
-          className={`w-full resize-y bg-[#222831] border text-[#EEEEEE] rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-[#00ADB5] transition-colors placeholder:text-[#EEEEEE]/30 ${drag ? 'border-[#00ADB5]' : 'border-[#393E46]'}`}
+          className={`w-full resize-y bg-[#1a1424] border text-[#f0ecfa] rounded-xl px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-[#a78bfa] transition-colors placeholder:text-[#f0ecfa]/30 ${drag ? 'border-[#a78bfa]' : 'border-[#2b2140]'}`}
         />
-        <p className="mt-1 text-xs text-[#EEEEEE]/30">Maximum {LIMITS.maxInput / 1024 / 1024} MB. {value.length > 0 && `${value.length.toLocaleString()} characters.`}</p>
+        <p className="mt-1 text-xs text-[#f0ecfa]/30">Maximum {LIMITS.maxInput / 1024 / 1024} MB. {value.length > 0 && `${value.length.toLocaleString()} characters.`}</p>
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button variant="primary" onClick={onAnalyse} disabled={busy || !value.trim()}>Analyse email</Button>
@@ -56,21 +56,21 @@ export function InputPanel({ value, onChange, onAnalyse, onSample, onFile, busy 
               key={s.id}
               type="button"
               onClick={() => onSample(s.raw)}
-              className="rounded-xl border border-white/8 bg-[#222831] p-3 text-left transition-all cursor-pointer hover:border-[#00ADB5]/40 active:scale-95"
+              className="rounded-xl border border-white/8 bg-[#1a1424] p-3 text-left transition-all cursor-pointer hover:border-[#a78bfa]/40 active:scale-95"
             >
               <span className="block text-sm font-semibold">{s.label}</span>
-              <span className="block text-xs text-[#EEEEEE]/50">{s.blurb}</span>
+              <span className="block text-xs text-[#f0ecfa]/50">{s.blurb}</span>
             </button>
           ))}
         </div>
       </div>
       <div className="mt-5 border-t border-white/5 pt-4">
         <Disclosure title="How to get the raw source" id="how-to-raw">
-          <ul className="space-y-3 text-sm text-[#EEEEEE]/70">
-            <li><strong className="text-[#EEEEEE]">Gmail:</strong> open the message, click the three dots, choose <em>Show original</em>, then <em>Copy to clipboard</em>.</li>
-            <li><strong className="text-[#EEEEEE]">Outlook (desktop):</strong> open the message, File, Properties, and copy the <em>Internet headers</em>; for the full source choose <em>Save as</em> and pick the .msg/.eml format. Outlook on the web: three dots, View, <em>View message source</em>.</li>
-            <li><strong className="text-[#EEEEEE]">Apple Mail:</strong> select the message, View menu, Message, <em>Raw Source</em> (or <em>All Headers</em>), then copy everything.</li>
-            <li className="text-xs text-[#EEEEEE]/40">Forwarding an email usually strips the original headers. Use the options above instead.</li>
+          <ul className="space-y-3 text-sm text-[#f0ecfa]/70">
+            <li><strong className="text-[#f0ecfa]">Gmail:</strong> open the message, click the three dots, choose <em>Show original</em>, then <em>Copy to clipboard</em>.</li>
+            <li><strong className="text-[#f0ecfa]">Outlook (desktop):</strong> open the message, File, Properties, and copy the <em>Internet headers</em>; for the full source choose <em>Save as</em> and pick the .msg/.eml format. Outlook on the web: three dots, View, <em>View message source</em>.</li>
+            <li><strong className="text-[#f0ecfa]">Apple Mail:</strong> select the message, View menu, Message, <em>Raw Source</em> (or <em>All Headers</em>), then copy everything.</li>
+            <li className="text-xs text-[#f0ecfa]/40">Forwarding an email usually strips the original headers. Use the options above instead.</li>
           </ul>
         </Disclosure>
       </div>

@@ -4,10 +4,10 @@
 @import "@fontsource/syne/latin-800.css";
 
 @theme {
-  --color-primary: #222831;
-  --color-secondary: #393E46;
-  --color-accent: #00ADB5;
-  --color-light: #EEEEEE;
+  --color-primary: #1a1424;
+  --color-secondary: #2b2140;
+  --color-accent: #a78bfa;
+  --color-light: #f0ecfa;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-display: 'Syne', system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -15,8 +15,8 @@
 
 body {
   margin: 0;
-  background-color: #222831;
-  color: #EEEEEE;
+  background-color: #1a1424;
+  color: #f0ecfa;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -34,8 +34,8 @@ input, select, textarea { font-size: 16px !important; }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #393E46; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #00ADB5; }
+::-webkit-scrollbar-thumb { background: #2b2140; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #a78bfa; }
 
 @keyframes skeleton-shimmer {
   0%   { background-position: -200% 0; }

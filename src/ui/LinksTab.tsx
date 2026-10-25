@@ -33,15 +33,15 @@ export function LinksTab({ result, onToast }: { result: AnalysisResult; onToast:
           <Button onClick={copyAll}>Copy all defanged</Button>
         </div>
       </div>
-      <p className="text-xs text-[#EEEEEE]/40 mb-3">
+      <p className="text-xs text-[#f0ecfa]/40 mb-3">
         Links are shown as plain text and are never clickable or fetched. Defanged form (hxxp, [.]) is safe to paste into tickets and chats.
         Raw destinations are hidden by default{showRaw ? ' (now shown as inert text)' : ''}.
       </p>
-      <div className="overflow-x-auto rounded-xl" style={{ background: '#222831' }}>
+      <div className="overflow-x-auto rounded-xl" style={{ background: '#1a1424' }}>
         <table className="w-full text-left text-xs min-w-[44rem]">
           <caption className="sr-only">Links found in the message</caption>
           <thead>
-            <tr className="text-[#EEEEEE]/50 uppercase tracking-wider">
+            <tr className="text-[#f0ecfa]/50 uppercase tracking-wider">
               <th scope="col" className="px-3 py-2 font-semibold">Shown text</th>
               <th scope="col" className="px-3 py-2 font-semibold">Real destination</th>
               <th scope="col" className="px-3 py-2 font-semibold">Flags</th>
@@ -51,12 +51,12 @@ export function LinksTab({ result, onToast }: { result: AnalysisResult; onToast:
             {links.map((l, i) => (
               <tr key={i} data-testid="link-row" className="border-t border-white/5">
                 <td className="px-3 py-2 align-top break-words max-w-[14rem]">
-                  {l.text ? <span data-testid="link-text">{l.text}</span> : <span className="text-[#EEEEEE]/30">(bare URL in text)</span>}
+                  {l.text ? <span data-testid="link-text">{l.text}</span> : <span className="text-[#f0ecfa]/30">(bare URL in text)</span>}
                 </td>
                 <td className="px-3 py-2 align-top break-all font-mono">
                   <span data-testid="link-defanged">{l.defanged}</span>
-                  {l.ipNormalized && l.hostKind !== 'ip' && <span className="block text-[#EEEEEE]/40">resolves as IP {l.ipNormalized.replace(/\./g, '[.]')}</span>}
-                  {showRaw && <span data-testid="link-raw" className="mt-1 block text-[#EEEEEE]/40">raw: {l.href.slice(0, 300)}</span>}
+                  {l.ipNormalized && l.hostKind !== 'ip' && <span className="block text-[#f0ecfa]/40">resolves as IP {l.ipNormalized.replace(/\./g, '[.]')}</span>}
+                  {showRaw && <span data-testid="link-raw" className="mt-1 block text-[#f0ecfa]/40">raw: {l.href.slice(0, 300)}</span>}
                 </td>
                 <td className="px-3 py-2 align-top">
                   <div className="flex flex-wrap gap-1">
@@ -67,7 +67,7 @@ export function LinksTab({ result, onToast }: { result: AnalysisResult; onToast:
                     })}
                   </div>
                   {l.claimedHost && l.flags.includes('text-mismatch') && (
-                    <p className="mt-1 text-[#EEEEEE]/50">Text claims <span className="font-mono">{l.claimedHost.replace(/\./g, '[.]')}</span></p>
+                    <p className="mt-1 text-[#f0ecfa]/50">Text claims <span className="font-mono">{l.claimedHost.replace(/\./g, '[.]')}</span></p>
                   )}
                 </td>
               </tr>

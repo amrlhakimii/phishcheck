@@ -99,12 +99,12 @@ export default function App() {
 
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-30 border-b border-white/5" style={{ background: 'rgba(34,40,49,0.8)', backdropFilter: 'blur(16px)' }}>
+      <header className="sticky top-0 z-30 border-b border-white/5" style={{ background: 'rgba(26,20,36,0.8)', backdropFilter: 'blur(16px)' }}>
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
           <a href="/" className="font-display text-lg font-extrabold tracking-tight" aria-label="PhishCheck home">
-            <span className="text-[#00ADB5]">Phish</span>Check
+            <span className="text-[#a78bfa]">Phish</span>Check
           </a>
-          <span className="rounded-full bg-[#00ADB5]/20 px-3 py-1 text-xs font-medium text-[#00ADB5]">Runs in your browser</span>
+          <span className="rounded-full bg-[#a78bfa]/20 px-3 py-1 text-xs font-medium text-[#a78bfa]">Runs in your browser</span>
         </div>
       </header>
 
@@ -112,8 +112,8 @@ export default function App() {
         <section>
           <Eyebrow className="mb-1">Phishing email checker</Eyebrow>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Paste an email. See why it looks suspicious.</h1>
-          <p className="mt-2 text-sm text-[#EEEEEE]/60">
-            <strong className="text-[#EEEEEE]/80">Your email never leaves your browser.</strong> Nothing is uploaded or stored, no link is opened, no image is loaded and no HTML is rendered.
+          <p className="mt-2 text-sm text-[#f0ecfa]/60">
+            <strong className="text-[#f0ecfa]/80">Your email never leaves your browser.</strong> Nothing is uploaded or stored, no link is opened, no image is loaded and no HTML is rendered.
             PhishCheck reports indicators and a heuristic score. It is not a guarantee of safety.
           </p>
         </section>
@@ -140,8 +140,8 @@ export default function App() {
               <div role="alert">
                 <Eyebrow className="mb-1">Could not read this</Eyebrow>
                 <h2 className="text-lg font-bold mb-1">{view.message.startsWith('This') ? "This doesn't look like raw email source." : 'Cannot analyse this input.'}</h2>
-                <p className="text-sm text-[#EEEEEE]/70 mb-3">{view.message}</p>
-                <p className="text-sm text-[#EEEEEE]/70">Open "How to get the raw source" above: in Gmail use <em>Show original</em>, in Outlook <em>View message source</em>, in Apple Mail <em>View, Message, Raw Source</em>. Pasting only the body text or a forwarded copy will not work.</p>
+                <p className="text-sm text-[#f0ecfa]/70 mb-3">{view.message}</p>
+                <p className="text-sm text-[#f0ecfa]/70">Open "How to get the raw source" above: in Gmail use <em>Show original</em>, in Outlook <em>View message source</em>, in Apple Mail <em>View, Message, Raw Source</em>. Pasting only the body text or a forwarded copy will not work.</p>
               </div>
             </Card>
           )}
@@ -152,7 +152,7 @@ export default function App() {
             {result.warnings.length > 0 && (
               <Card>
                 <Eyebrow className="mb-1">Parser notes</Eyebrow>
-                <ul className="list-disc pl-5 text-sm text-[#EEEEEE]/70">{result.warnings.map((w, i) => <li key={i}>{w}</li>)}</ul>
+                <ul className="list-disc pl-5 text-sm text-[#f0ecfa]/70">{result.warnings.map((w, i) => <li key={i}>{w}</li>)}</ul>
               </Card>
             )}
             <VerdictCard result={result} />
@@ -172,7 +172,7 @@ export default function App() {
 
         <ScorePanel />
 
-        <footer className="pt-4 text-xs text-[#EEEEEE]/30">
+        <footer className="pt-4 text-xs text-[#f0ecfa]/30">
           <p>PhishCheck is an educational tool. It reports indicators and a heuristic score, not a verdict you can rely on. For a real incident, report it through your organisation's process.</p>
           <p className="mt-1">Samples are invented and use reserved domains (example.com, .test) and documentation IP ranges.</p>
         </footer>
@@ -180,7 +180,7 @@ export default function App() {
 
       {toast && (
         <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2" role="status">
-          <div className="toast-in rounded-full px-5 py-3 text-sm text-[#EEEEEE] backdrop-blur-md" style={{ background: 'rgba(20,20,24,0.85)', border: '1px solid rgba(255,255,255,0.08)' }}>{toast}</div>
+          <div className="toast-in rounded-full px-5 py-3 text-sm text-[#f0ecfa] backdrop-blur-md" style={{ background: 'rgba(20,20,24,0.85)', border: '1px solid rgba(255,255,255,0.08)' }}>{toast}</div>
         </div>
       )}
     </div>
