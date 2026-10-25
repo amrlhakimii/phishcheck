@@ -4,6 +4,8 @@ import { sameOrg } from '../domain'
 import { AUTHORITY_ACRONYMS, AUTHORITY_PREFIXES, AUTHORITY_WORDS, FREEMAIL_DOMAINS } from '../data/keywords'
 import { mk } from './util'
 
+const DEPARTMENT_TITLES = new Set(['hr', 'finance', 'human resources', 'payroll'])
+
 /** Returns the authority title found in a display name, or null. */
 export function authorityTitle(display: string): string | null {
   const name = display.replace(/[‘’]/g, "'").trim()
@@ -24,6 +26,8 @@ export function c13(ctx: Context): Finding[] {
   const title = authorityTitle(f.display)
   if (!title) return []
   const free = FREEMAIL_DOMAINS.includes(f.domain.toLowerCase())
+  // Department names (HR, finance, payroll) are normal for company mailboxes that use a third-party vendor in Reply-To, so only free-mail counts for them.
+  if (!free && DEPARTMENT_TITLES.has(title.toLowerCase())) return []
   const replyDiff = !!ctx.replyTo?.domain && !sameOrg(ctx.replyTo.domain, f.domain)
   if (!free && !replyDiff) return []
   const reason = free && replyDiff

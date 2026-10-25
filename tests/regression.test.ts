@@ -100,7 +100,7 @@ describe('C13 executive / authority impersonation', () => {
     expect(codesOf(from(f))).toContain('C13.authority_freemail')
   })
   it('fires when the domain differs from Reply-To even without a free-mail provider', () => {
-    const r = from('Finance Team <finance@company.example.com>', ['Reply-To: payments@other.example.net'])
+    const r = from('CFO Lim <cfo@company.example.com>', ['Reply-To: payments@other.example.net'])
     expect(codesOf(r)).toContain('C13.authority_freemail')
   })
   it('does not fire on a title with a matching company address and no Reply-To', () => {
